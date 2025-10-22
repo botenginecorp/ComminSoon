@@ -6,9 +6,13 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// ENV
+// fuerza a dotenv a leer el .env del mismo dir del server.js
+dotenv.config({ path: path.join(__dirname, ".env") });
+
+// valida env
 const DATABASE_URL = process.env.DATABASE_URL;
 const USE_SSL = process.env.PG_USE_SSL === "true";
 const CA_PATH = process.env.PG_SSL_CA;
@@ -23,20 +27,25 @@ if (USE_SSL && !CA_PATH) {
   process.exit(1);
 }
 
-// SSL
+// configura SSL usando la misma CA que probaste con psql
 let ssl = false;
 if (USE_SSL) {
-  const ca = fs.readFileSync(CA_PATH, "utf8");
-  ssl = { rejectUnauthorized: true, ca };
+  try {
+    const ca = fs.readFileSync(CA_PATH, "utf8");
+    ssl = { rejectUnauthorized: true, ca };
+  } catch (e) {
+    console.error("No se pudo leer la CA:", CA_PATH, e.message);
+    process.exit(1);
+  }
 }
 
-// Pool unico
+// único Pool
 const pool = new Pool({
   connectionString: DATABASE_URL,
   ssl,
 });
 
-// DB bootstrap
+// crea tabla si no existe
 async function ensureTable() {
   const createSQL = `
     CREATE TABLE IF NOT EXISTS public.subscribers (
@@ -48,17 +57,13 @@ async function ensureTable() {
   await pool.query(createSQL);
 }
 
-// App
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// estáticos
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// servir estáticos desde la carpeta del server
 app.use(express.static(__dirname));
 
-// API
 app.post("/api/subscribe", async (req, res) => {
   const { email } = req.body || {};
   if (!email || typeof email !== "string") return res.status(400).json({ message: "Correo inválido" });
@@ -79,9 +84,10 @@ app.post("/api/subscribe", async (req, res) => {
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-// Start
 (async () => {
   try {
+    // validación explícita para ver que Node ve la CA
+    console.log("CA path:", CA_PATH, "exists:", fs.existsSync(CA_PATH));
     await ensureTable();
     app.listen(PORT, () => console.log(`Servidor iniciado en http://localhost:${PORT}`));
   } catch (err) {
