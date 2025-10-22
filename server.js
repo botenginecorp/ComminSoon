@@ -8,6 +8,7 @@ import fs from "fs";
 
 dotenv.config();
 
+// validar env
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
   console.error("Falta DATABASE_URL");
@@ -15,50 +16,34 @@ if (!DATABASE_URL) {
 }
 
 const USE_SSL = process.env.PG_USE_SSL === "true";
+const INSECURE = process.env.PG_SSL_INSECURE === "true";
 const CA_PATH = process.env.PG_SSL_CA;
 
+// construir config SSL
 let ssl = false;
-
 if (USE_SSL) {
-  if (!CA_PATH) {
-    console.error("Falta PG_SSL_CA. No se permite SSL sin CA.");
-    process.exit(1);
-  }
-  try {
-    const ca = fs.readFileSync(CA_PATH, "utf8");
-    ssl = { rejectUnauthorized: true, ca };
-  } catch (e) {
-    console.error("No se pudo leer la CA:", e.message);
-    process.exit(1);
-  }
-}
-
-export const pool = new Pool({
-  connectionString: DATABASE_URL,
-  ssl,
-});
-
-let sslConfig = false;
-if (useSSL){
-  if (sslCaPath){
-    try {
-      const ca = fs.readFileSync(sslCaPath, "utf8");
-      sslConfig = { rejectUnauthorized: true, ca };
-    } catch (err){
-      console.warn("No se pudo leer PG_SSL_CA, se usará SSL sin validar certificado.", err.message);
-      sslConfig = { rejectUnauthorized: false };
-    }
+  if (INSECURE) {
+    // usar solo para diagnóstico temporal
+    ssl = { rejectUnauthorized: false };
   } else {
-    console.warn("PG_USE_SSL está en true pero PG_SSL_CA no se definió. Se usará SSL sin validar certificado.");
-    sslConfig = { rejectUnauthorized: false };
+    if (!CA_PATH) {
+      console.error("Falta PG_SSL_CA cuando PG_USE_SSL=true");
+      process.exit(1);
+    }
+    try {
+      const ca = fs.readFileSync(CA_PATH, "utf8");
+      ssl = { rejectUnauthorized: true, ca };
+    } catch (e) {
+      console.error("No se pudo leer la CA:", e.message);
+      process.exit(1);
+    }
   }
-} else if (!DATABASE_URL.includes("localhost")) {
-  sslConfig = { rejectUnauthorized: false };
 }
 
+// único pool (evita duplicados)
 const pool = new Pool({
   connectionString: DATABASE_URL,
-  ssl: sslConfig
+  ssl,
 });
 
 async function ensureTable() {
@@ -72,32 +57,30 @@ async function ensureTable() {
   await pool.query(createSQL);
 }
 
-await ensureTable();
-
+// app express
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// servir estáticos desde la raíz del proyecto
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = __dirname;
-
 app.use(express.static(publicDir));
 
+// endpoints
 app.post("/api/subscribe", async (req, res) => {
   const { email } = req.body || {};
   if (!email || typeof email !== "string") {
     return res.status(400).json({ message: "Correo inválido" });
   }
-
   const normalized = email.trim().toLowerCase();
   const emailRegex = /\S+@\S+\.\S+/;
   if (!emailRegex.test(normalized)) {
     return res.status(400).json({ message: "Formato de correo no válido" });
   }
-
   try {
-  const insertSQL = "INSERT INTO public.subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING RETURNING id";
+    const insertSQL = "INSERT INTO public.subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING RETURNING id";
     const result = await pool.query(insertSQL, [normalized]);
     if (result.rowCount === 0) {
       return res.status(409).json({ ok: false, message: "Ese correo ya está registrado." });
@@ -113,7 +96,16 @@ app.get("/health", (req, res) => {
   res.json({ ok: true });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Servidor iniciado en http://localhost:${PORT}`);
-});
+// iniciar servidor
+const PORT = parseInt(process.env.PORT || "5000", 10);
+(async () => {
+  try {
+    await ensureTable();
+    app.listen(PORT, () => {
+      console.log(`Servidor iniciado en http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("Fallo al iniciar:", err);
+    process.exit(1);
+  }
+})();
