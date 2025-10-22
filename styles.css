@@ -43,10 +43,15 @@
   position: relative;
   overflow: hidden;
 }
-
-/* (limpieza) se eliminan reglas antiguas de burbujas para usar una sola animación 'rise' */
-
-/* Peces dentro del recuadro */
+  margin-top:18px;
+  font-size:12px;
+  color:rgba(255,244,236,0.78);
+  text-shadow:0 1px 6px rgba(10,16,22,0.55);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  line-height:1.4;
 .tank .fish {
   z-index: 4; /* por encima de burbujas y agua */
   position: absolute;
@@ -55,6 +60,15 @@
   transform-origin: 50% 50%;
 }
 
+footer .footer-brand{
+  font-weight:600;
+}
+
+footer .footer-rights{
+  font-size:11px;
+  letter-spacing:0.02em;
+  color:rgba(255,244,236,0.68);
+}
 :root{
   --sunset:#fe7f2d;
   --sunset-soft:#ff9b57;
@@ -89,50 +103,35 @@ html, body {
 }
 
 button{
-  position:relative;
-  background: linear-gradient(180deg, #ffa04a 0%, #f37321 45%, #e45b05 100%);
+  background: var(--brand);
   color: #fff;
-  border:1px solid rgba(255,255,255,0.4);
-  box-shadow:
-    0 22px 36px rgba(240,104,12,0.32),
-    0 12px 22px rgba(208,88,6,0.22),
-    inset 0 1px 0 rgba(255,255,255,0.7),
-    inset 0 -3px 10px rgba(125,36,0,0.28);
+  border: none;
 }
 
 button:hover{
-  background: linear-gradient(180deg, #ffb265 0%, #f07929 45%, #d85a04 100%);
+  background: var(--brand-dark);
 }
 
 button:focus{
   outline:none;
-  box-shadow:
-    0 26px 40px rgba(226,90,4,0.38),
-    0 12px 28px rgba(196,76,0,0.24),
-    inset 0 1px 0 rgba(255,255,255,0.72),
-    inset 0 -3px 10px rgba(125,36,0,0.32);
+  box-shadow: 0 6px 18px rgba(254,127,45,0.26);
 }
 
 input[type="email"]{
-  position:relative;
-  padding:18px 26px;
-  width:360px;
+  padding:16px 20px;
+  width:320px;
   max-width:100%;
-  border-radius:32px;
-  border:1px solid rgba(255,255,255,0.58);
-  background:
-    linear-gradient(140deg, rgba(255,255,255,0.95), rgba(230,237,245,0.95)),
-    linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(213,225,238,0.94) 100%);
-  color: #1a2a3c;
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,0.45);
+  background: radial-gradient(120% 140% at 50% 10%, rgba(255,255,255,0.98), rgba(227,236,244,0.92) 55%, rgba(207,222,236,0.9) 100%);
+  color: #1c2d3d;
   outline:none;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 24px 36px rgba(8,16,28,0.28),
-    0 12px 24px rgba(8,16,28,0.14),
-    inset 0 1px 0 rgba(255,255,255,0.92),
-    inset 0 -2px 8px rgba(12,22,35,0.15);
-  transition: box-shadow 180ms ease, transform 180ms ease;
+    0 20px 32px rgba(10,16,24,0.26),
+    0 8px 18px rgba(6,12,20,0.15),
+    inset 0 2px 0 rgba(255,255,255,0.9),
+    inset 0 -2px 6px rgba(12,22,35,0.12);
+  transition: box-shadow 160ms ease, transform 160ms ease;
 }
 
 input::placeholder{
@@ -142,11 +141,11 @@ input::placeholder{
 
 input[type="email"]:focus{
   box-shadow:
-    0 30px 48px rgba(6,14,26,0.32),
-    0 14px 28px rgba(6,14,26,0.22),
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    inset 0 -3px 10px rgba(12,22,35,0.18);
-  transform: translateY(-3px);
+    0 24px 42px rgba(10,16,24,0.32),
+    0 10px 24px rgba(8,16,28,0.2),
+    inset 0 2px 0 rgba(255,255,255,0.95),
+    inset 0 -2px 6px rgba(12,22,35,0.15);
+  transform: translateY(-2px);
 }
 
 
@@ -707,10 +706,28 @@ button{
 /* Small helper when play mode active */
 .tank:active{ cursor:crosshair; }
 footer{
-  margin-top:10px;
+  margin-top:18px;
   font-size:12px;
-  color:rgba(255,244,236,0.75);
+  color:rgba(255,244,236,0.78);
   text-shadow:0 1px 6px rgba(10,16,22,0.55);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  line-height:1.35;
+  text-align:center;
+}
+
+footer .footer-brand{
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:0.02em;
+}
+
+footer .footer-rights{
+  font-size:11px;
+  letter-spacing:0.02em;
+  color:rgba(255,244,236,0.68);
 }
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
@@ -769,8 +786,7 @@ footer{
     width: clamp(240px, 88vw, 320px);
     margin:0 auto;
   }
-  .cta button,
-  button{
+  .cta button{
     width: clamp(220px, 84vw, 320px);
     text-align:center;
   }
