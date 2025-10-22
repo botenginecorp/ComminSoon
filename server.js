@@ -14,30 +14,30 @@ if (!DATABASE_URL) {
   process.exit(1);
 }
 
-const sslMode = process.env.DATABASE_SSL_MODE || "require";
-const caPath = process.env.DATABASE_CA_CERT_PATH;
-const caInline = process.env.DATABASE_CA_CERT;
+const useSSL = process.env.PG_USE_SSL === "true";
+const sslCaPath = process.env.PG_SSL_CA;
 
-let ssl = false;
-if (!DATABASE_URL.includes("localhost") && sslMode !== "disable"){
-  if (caInline && caInline.trim().length > 0){
-    ssl = { ca: caInline, rejectUnauthorized: true };
-  } else if (caPath){
-    try{
-      const ca = fs.readFileSync(caPath, "utf8");
-      ssl = { ca, rejectUnauthorized: true };
-    } catch(err){
-      console.warn("No se pudo leer DATABASE_CA_CERT_PATH, se usará SSL sin validar certificado.", err.message);
-      ssl = { rejectUnauthorized: false };
+let sslConfig = false;
+if (useSSL){
+  if (sslCaPath){
+    try {
+      const ca = fs.readFileSync(sslCaPath, "utf8");
+      sslConfig = { rejectUnauthorized: true, ca };
+    } catch (err){
+      console.warn("No se pudo leer PG_SSL_CA, se usará SSL sin validar certificado.", err.message);
+      sslConfig = { rejectUnauthorized: false };
     }
   } else {
-    ssl = { rejectUnauthorized: false };
+    console.warn("PG_USE_SSL está en true pero PG_SSL_CA no se definió. Se usará SSL sin validar certificado.");
+    sslConfig = { rejectUnauthorized: false };
   }
+} else if (!DATABASE_URL.includes("localhost")) {
+  sslConfig = { rejectUnauthorized: false };
 }
 
 const pool = new Pool({
   connectionString: DATABASE_URL,
-  ssl
+  ssl: sslConfig
 });
 
 async function ensureTable() {
