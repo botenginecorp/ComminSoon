@@ -11,7 +11,8 @@ const __dirname = path.dirname(__filename);
 
 // fuerza a dotenv a leer el .env del mismo dir del server.js
 dotenv.config({ path: path.join(__dirname, ".env") });
-
+// forzar a tomar este .env
+dotenv.config({ path: path.join(__dirname, ".env") });
 // valida env
 const DATABASE_URL = process.env.DATABASE_URL;
 const USE_SSL = process.env.PG_USE_SSL === "true";
