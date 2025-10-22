@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TropInsideAcuarios - Próximamente</title>
+  <meta name="description" content="Sitio oficial de AquaLife Acuarios. Próximamente.">
+  <link rel="stylesheet" href="styles.css">
+  
+</head>
+<body>
+  <div class="wrap">
+  <h1 class="headline float reveal" style="--delay:0s">
+    <span class="headline-letter" style="--index:0">T</span>
+    <span class="headline-letter" style="--index:1">r</span>
+    <span class="headline-letter" style="--index:2">o</span>
+    <span class="headline-letter" style="--index:3">p</span>
+    <span class="headline-letter" style="--index:4">I</span>
+    <span class="headline-letter" style="--index:5">n</span>
+    <span class="headline-letter" style="--index:6">s</span>
+    <span class="headline-letter" style="--index:7">i</span>
+    <span class="headline-letter" style="--index:8">d</span>
+    <span class="headline-letter" style="--index:9">e</span>
+    <span class="headline-letter space" style="--index:10">&nbsp;</span>
+    <span class="headline-letter" style="--index:11">A</span>
+    <span class="headline-letter" style="--index:12">c</span>
+    <span class="headline-letter" style="--index:13">u</span>
+    <span class="headline-letter" style="--index:14">a</span>
+    <span class="headline-letter" style="--index:15">r</span>
+    <span class="headline-letter" style="--index:16">i</span>
+    <span class="headline-letter" style="--index:17">o</span>
+  </h1>
+
+  <div class="lead-panel reveal" style="--delay:.08s">
+    <p class="lead">Estamos preparando algo especial para los amantes de los acuarios.</p>
+    <p class="lead accent">Déjanos tu correo y sé el primero en conocer el lanzamiento.</p>
+  </div>
+
+    <div class="tank" role="img" aria-label="Pecera de progreso hacia el lanzamiento">
+      <!-- Peces animados sobre el fondo -->
+      <div class="fish"><div class="eye"></div></div>
+      <div class="fish f2"><div class="eye"></div></div>
+      <div class="fish f3"><div class="eye"></div></div>
+  <div class="fish f4"><div class="eye"></div></div>
+  <div class="fish f5"><div class="eye"></div></div>
+  <div class="fish f6"><div class="eye"></div></div>
+  <div class="fish f7"><div class="eye"></div></div>
+
+  <span class="spark s1"></span>
+  <span class="spark s2"></span>
+  <span class="spark s3"></span>
+      
+      <!-- Burbujas independientes del nivel de agua -->
+      <div class="bubbles" aria-hidden="true">
+        <span class="bubble b1"></span>
+        <span class="bubble b2"></span>
+        <span class="bubble b3"></span>
+        <span class="bubble b4"></span>
+        <span class="bubble b5"></span>
+        <span class="bubble b6"></span>
+        <span class="bubble b7"></span>
+        <span class="bubble b8"></span>
+        <span class="bubble b9"></span>
+        <span class="bubble b10"></span>
+        <span class="bubble b11"></span>
+        <span class="bubble b12"></span>
+        <span class="bubble b13"></span>
+        <span class="bubble b14"></span>
+        <span class="bubble b15"></span>
+      </div>
+      <!-- Agua animada (nivel de progreso) -->
+      <div class="water" id="agua" aria-hidden="false">
+        <div class="wave"></div>
+        <div class="wave w2"></div>
+      </div>
+    </div>
+
+  <div class="progress reveal" style="--delay:.24s">
+  <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Progreso del lanzamiento" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20">
+        <div class="progress-fill" id="progressFill">
+          <span class="progress-wave wave1"></span>
+          <span class="progress-wave wave2"></span>
+        </div>
+      </div>
+    </div>
+
+  <div class="cta reveal" style="--delay:.32s">
+      <input id="email" type="email" placeholder="Tu correo">
+  <button id="btn" class="btn-sheen">Notificarme</button>
+    </div>
+
+    <footer>© 2025 BotEngineCorp - TropInsideAcuario. Todos los derechos reservados.</footer>
+    <span class="sr-only" aria-live="polite" id="ariaProgreso"></span>
+  </div>
+
+  <script>
+    const fechaInicio = new Date("2025-10-21T00:00:00"); 
+    const fechaLanzamiento = new Date("2025-12-01T00:00:00");
+    const aguaElemento = document.getElementById("agua");
+    if(aguaElemento){
+      aguaElemento.style.height = "86%";
+    }
+
+    function diasEntre(a, b){
+      const ms = b.getTime() - a.getTime();
+      return Math.ceil(ms / 86400000);
+    }
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function actualizar(){
+      const hoy = new Date();
+      const total = Math.max(1, diasEntre(fechaInicio, fechaLanzamiento));
+      const restan = Math.max(0, diasEntre(hoy, fechaLanzamiento));
+      const progreso = clamp(1 - restan / total, 0, 1);
+      const porcentaje = clamp(Math.max(20, Math.round(progreso * 100)), 20, 100);
+      const progressFill = document.getElementById("progressFill");
+      const progressTrack = document.getElementById("progressTrack");
+      if(progressFill){
+        progressFill.style.width = porcentaje + "%";
+      }
+      if(progressTrack){
+        progressTrack.setAttribute("aria-valuenow", String(porcentaje));
+      }
+
+      const aria = document.getElementById("ariaProgreso");
+      if(aria){
+        aria.textContent = hoy >= fechaLanzamiento
+          ? "Progreso completo. Apertura hoy."
+          : "Progreso hacia el lanzamiento " + porcentaje + " por ciento.";
+      }
+    }
+
+    actualizar();
+    setInterval(actualizar, 3600000);
+
+    document.getElementById("btn").addEventListener("click", () => {
+      const email = document.getElementById("email").value.trim();
+      if(!email){
+        alert("Escribe tu correo.");
+        return;
+      }
+      alert("Gracias. Te avisaremos al abrir.");
+      document.getElementById("email").value = "";
+    });
+  </script>
+  <div id="toast" class="toast">Haz clic dentro de la pecera: los peces irán a puntos válidos cercanos</div>
+  <script>
+    // Control por clic: los peces solo nadan hacia "puntos válidos" dentro de la pecera.
+    (function(){
+      const tank = document.querySelector('.tank');
+      if(!tank) return;
+      const fishes = Array.from(document.querySelectorAll('.fish'));
+      const fishStates = fishes.map((_, i)=>({
+        roamTarget: null,
+        nextChange: 0,
+        speed: 0.32 + i*0.08,
+        clickGoal: null
+      }));
+      const toast = document.getElementById('toast');
+      let rafId = null;
+
+      // Puntos válidos (porcentuales dentro de la pecera)
+      const hotspotsPct = [
+        {x:0.20, y:0.22}, {x:0.50, y:0.20}, {x:0.80, y:0.28},
+        {x:0.25, y:0.55}, {x:0.50, y:0.65}, {x:0.75, y:0.55},
+        {x:0.35, y:0.85}, {x:0.65, y:0.82}
+      ];
+      const PICK_RADIUS = 100; // px para aceptar el punto más cercano
+      const SAFE_MARGIN_X = 26;
+  const SAFE_MARGIN_TOP = 82;
+      const SAFE_MARGIN_BOTTOM = 54;
+
+      function clampCenterX(cx, fw, rect){
+        const min = SAFE_MARGIN_X + fw / 2;
+        const max = rect.width - SAFE_MARGIN_X - fw / 2;
+        return clamp(cx, min, Math.max(min, max));
+      }
+
+      function clampCenterY(cy, fh, rect){
+        const min = SAFE_MARGIN_TOP + fh / 2;
+        const max = rect.height - SAFE_MARGIN_BOTTOM - fh / 2;
+        return clamp(cy, min, Math.max(min, max));
+      }
+
+      function randomSafeCenter(rect, fw, fh){
+        const minX = SAFE_MARGIN_X + fw / 2;
+        const maxX = rect.width - SAFE_MARGIN_X - fw / 2;
+        const minY = SAFE_MARGIN_TOP + fh / 2;
+        const maxY = rect.height - SAFE_MARGIN_BOTTOM - fh / 2;
+        const rangeX = Math.max(0, maxX - minX);
+        const rangeY = Math.max(0, maxY - minY);
+        return {
+          x: rangeX === 0 ? minX : minX + Math.random() * rangeX,
+          y: rangeY === 0 ? minY : minY + Math.random() * rangeY
+        };
+      }
+
+      function assignRoamTarget(index, rect, fw, fh, now){
+        const point = randomSafeCenter(rect, fw, fh);
+        const state = fishStates[index];
+        state.roamTarget = point;
+  state.nextChange = now + 2600 + Math.random() * 5200;
+        return point;
+      }
+
+      let clickTarget = null; // {x,y} del objetivo global cuando se hace clic
+
+      // Inicializar posiciones absolutas (left/top) si no las tienen y guardar base
+      const initialRect = tank.getBoundingClientRect();
+      const initialTime = performance.now();
+      fishes.forEach((f,i)=>{
+        if(!f.style.left) f.style.left = (12 + i*28) + 'px';
+        if(!f.style.top) f.style.top = (30 + i*40) + 'px';
+        f.style.animation = 'none';
+        const fw = f.offsetWidth || 36;
+        const fh = f.offsetHeight || 20;
+        const left = parseFloat(f.style.left) || 0;
+        const top = parseFloat(f.style.top) || 0;
+        const centerX = clampCenterX(left + fw/2, fw, initialRect);
+        const centerY = clampCenterY(top + fh/2, fh, initialRect);
+        f.style.left = (centerX - fw/2) + 'px';
+        f.style.top = (centerY - fh/2) + 'px';
+        f.dataset.cx = centerX;
+        f.dataset.cy = centerY;
+        f.dataset.angle = '0';
+        assignRoamTarget(i, initialRect, fw, fh, initialTime);
+      });
+
+      function showToast(msg){
+        if(!toast) return;
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(()=> toast.classList.remove('show'), 1400);
+      }
+
+      function getHotspotsPx(rect){
+        return hotspotsPct.map(p=>({ x: p.x * rect.width, y: p.y * rect.height }));
+      }
+
+      function handleClick(ev){
+        const rect = tank.getBoundingClientRect();
+        const localX = ev.clientX - rect.left;
+        const localY = ev.clientY - rect.top;
+        // elegir hotspot más cercano si está dentro del radio permitido
+        const hs = getHotspotsPx(rect);
+        let best = null, bestD2 = Infinity;
+        hs.forEach(pt=>{
+          const dx = pt.x - localX, dy = pt.y - localY;
+          const d2 = dx*dx + dy*dy;
+          if(d2 < bestD2){ bestD2 = d2; best = pt; }
+        });
+        if(best && Math.sqrt(bestD2) <= PICK_RADIUS){
+          const sampleFish = fishes[0];
+          const fw = sampleFish ? sampleFish.offsetWidth || 36 : 36;
+          const fh = sampleFish ? sampleFish.offsetHeight || 20 : 20;
+          const target = {
+            x: clampCenterX(best.x, fw, rect),
+            y: clampCenterY(best.y, fh, rect)
+          };
+          clickTarget = target;
+          fishes.forEach((fish, index)=>{
+            const state = fishStates[index];
+            const w = fish.offsetWidth || fw;
+            const h = fish.offsetHeight || fh;
+            const spread = 22 + Math.random() * 28;
+            const angle = Math.random() * Math.PI * 2;
+            const px = clampCenterX(target.x + Math.cos(angle) * spread, w, rect);
+            const py = clampCenterY(target.y + Math.sin(angle) * spread, h, rect);
+            state.clickGoal = { x: px, y: py };
+          });
+          showToast('¡Nadar hacia punto!');
+        } else {
+          showToast('Haz clic cerca de un punto válido');
+        }
+      }
+
+      tank.addEventListener('click', handleClick);
+
+      function updatePositions(){
+        const rect = tank.getBoundingClientRect();
+        const t = Date.now()/1000;
+        const now = performance.now();
+        let allClose = clickTarget !== null;
+        fishes.forEach((f,i)=>{
+          const fw = f.offsetWidth;
+          const fh = f.offsetHeight;
+          let curLeft = parseFloat(f.style.left) || f.offsetLeft;
+          let curTop = parseFloat(f.style.top) || f.offsetTop;
+          const cx = curLeft + fw/2;
+          const cy = curTop + fh/2;
+          const prevCX = parseFloat(f.dataset.cx) || cx;
+          const prevCY = parseFloat(f.dataset.cy) || cy;
+          let nextCX = cx;
+          let nextCY = cy;
+          const state = fishStates[i];
+
+          if(clickTarget){
+            const goal = state.clickGoal || clickTarget;
+            const targetCX = clampCenterX(goal.x, fw, rect);
+            const targetCY = clampCenterY(goal.y, fh, rect);
+            const dx = targetCX - cx;
+            const dy = targetCY - cy;
+            const dist = Math.hypot(dx, dy);
+            const step = Math.min(dist, state.speed + 0.2);
+            if(dist > 0){
+              nextCX = cx + (dx/dist) * step;
+              nextCY = cy + (dy/dist) * step;
+            }
+            nextCX = clampCenterX(nextCX, fw, rect);
+            nextCY = clampCenterY(nextCY, fh, rect);
+            if(dist > 16){
+              allClose = false;
+            } else {
+              state.clickGoal = { x: targetCX, y: targetCY };
+            }
+          } else {
+            state.clickGoal = null;
+            if(!state.roamTarget || now >= state.nextChange){
+              assignRoamTarget(i, rect, fw, fh, now);
+            }
+            let targetCX = state.roamTarget.x;
+            let targetCY = state.roamTarget.y;
+            let dx = targetCX - cx;
+            let dy = targetCY - cy;
+            let dist = Math.hypot(dx, dy);
+            if(dist < 10){
+              assignRoamTarget(i, rect, fw, fh, now);
+              targetCX = state.roamTarget.x;
+              targetCY = state.roamTarget.y;
+              dx = targetCX - cx;
+              dy = targetCY - cy;
+              dist = Math.hypot(dx, dy);
+            }
+            const step = Math.min(dist, state.speed);
+            if(dist > 0){
+              const jitter = Math.sin(t*0.9 + i*1.7) * 0.18;
+              const wobble = Math.cos(t*1.1 + i) * 0.18;
+              nextCX = cx + (dx/dist) * step + jitter;
+              nextCY = cy + (dy/dist) * step + wobble;
+            } else {
+              nextCX = targetCX;
+              nextCY = targetCY;
+            }
+            nextCX = clampCenterX(nextCX, fw, rect);
+            nextCY = clampCenterY(nextCY, fh, rect);
+          }
+
+          const nextLeft = nextCX - fw/2;
+          const nextTop = nextCY - fh/2;
+          f.style.left = nextLeft + 'px';
+          f.style.top = nextTop + 'px';
+
+          const vx = nextCX - prevCX;
+          const vy = nextCY - prevCY;
+          let angle = parseFloat(f.dataset.angle) || 0;
+          if(Math.abs(vx) + Math.abs(vy) > 0.01){
+            angle = Math.atan2(vy, vx) * 180/Math.PI;
+          }
+          f.dataset.angle = angle;
+          f.dataset.cx = nextCX;
+          f.dataset.cy = nextCY;
+          f.style.transform = `rotate(${angle + 180}deg)`;
+        });
+        if(allClose && clickTarget){
+          const resetTime = performance.now();
+          fishes.forEach((fish, index)=>{
+            const fw = fish.offsetWidth || 36;
+            const fh = fish.offsetHeight || 20;
+            fishStates[index].clickGoal = null;
+            assignRoamTarget(index, rect, fw, fh, resetTime);
+          });
+          clickTarget = null;
+        }
+        rafId = requestAnimationFrame(updatePositions);
+      }
+
+      if(!rafId) rafId = requestAnimationFrame(updatePositions);
+    })();
+  </script>
+</body>
+</html>
