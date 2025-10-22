@@ -10,12 +10,33 @@ dotenv.config();
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
-  console.error("DATABASE_URL no está configurado. Define la cadena de conexión de PostgreSQL.");
+  console.error("Falta DATABASE_URL");
   process.exit(1);
 }
 
-const useSSL = process.env.PG_USE_SSL === "true";
-const sslCaPath = process.env.PG_SSL_CA;
+const USE_SSL = process.env.PG_USE_SSL === "true";
+const CA_PATH = process.env.PG_SSL_CA;
+
+let ssl = false;
+
+if (USE_SSL) {
+  if (!CA_PATH) {
+    console.error("Falta PG_SSL_CA. No se permite SSL sin CA.");
+    process.exit(1);
+  }
+  try {
+    const ca = fs.readFileSync(CA_PATH, "utf8");
+    ssl = { rejectUnauthorized: true, ca };
+  } catch (e) {
+    console.error("No se pudo leer la CA:", e.message);
+    process.exit(1);
+  }
+}
+
+export const pool = new Pool({
+  connectionString: DATABASE_URL,
+  ssl,
+});
 
 let sslConfig = false;
 if (useSSL){
