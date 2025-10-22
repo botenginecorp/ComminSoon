@@ -43,15 +43,6 @@
   position: relative;
   overflow: hidden;
 }
-  margin-top:18px;
-  font-size:12px;
-  color:rgba(255,244,236,0.78);
-  text-shadow:0 1px 6px rgba(10,16,22,0.55);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-  line-height:1.4;
 .tank .fish {
   z-index: 4; /* por encima de burbujas y agua */
   position: absolute;
