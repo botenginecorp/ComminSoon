@@ -762,11 +762,17 @@ footer{
   }
   .cta{
     flex-direction:column;
-    align-items:stretch;
+    align-items:center;
     gap:12px;
   }
   input[type="email"]{
-    width:100%;
+    width: clamp(240px, 88vw, 320px);
+    margin:0 auto;
+  }
+  .cta button,
+  button{
+    width: clamp(220px, 84vw, 320px);
+    text-align:center;
   }
   .toast{
     width: clamp(220px, 90vw, 320px);
