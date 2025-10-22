@@ -177,7 +177,9 @@ p{margin:0; font-size:18px; opacity:0.94}
   display:inline-flex;
   gap:0.02em;
   align-items:flex-end;
-  font-size: clamp(2.8rem, 5.4vw, 3.8rem);
+  flex-wrap:wrap;
+  justify-content:center;
+  font-size: clamp(2.5rem, 5.4vw, 3.8rem);
   font-weight:800;
   letter-spacing:0.04em;
   text-transform:none;
@@ -680,4 +682,62 @@ footer{
 }
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
+}
+
+@media (max-width: 768px){
+  .wrap{
+    padding:18px;
+    gap:20px;
+  }
+  .lead-panel{
+    padding:16px 20px;
+  }
+  .tank{
+    height:380px;
+  }
+  .progress{
+    width: min(96vw, 500px);
+  }
+  .progress-track{
+    height:38px;
+  }
+  input[type="email"]{
+    width:min(88vw, 360px);
+  }
+}
+
+@media (max-width: 540px){
+  body{ text-align:center; }
+  .wrap{
+    padding:16px;
+    gap:18px;
+  }
+  .headline{
+    font-size: clamp(2.2rem, 9vw, 3.1rem);
+    letter-spacing:0.025em;
+  }
+  .lead-panel{
+    padding:15px 18px;
+  }
+  .tank{
+    height:328px;
+  }
+  .progress{
+    width:100%;
+  }
+  .progress-track{
+    height:32px;
+  }
+  .cta{
+    flex-direction:column;
+    align-items:stretch;
+    gap:12px;
+  }
+  input[type="email"]{
+    width:100%;
+  }
+  .toast{
+    width: clamp(220px, 90vw, 320px);
+    font-size:12px;
+  }
 }
